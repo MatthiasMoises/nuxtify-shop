@@ -11,20 +11,24 @@
     <v-card-subtitle> {{ product.category }} </v-card-subtitle>
 
     <v-card-text>
-      <v-row class="mx-0 mt-4">
-        <v-rating
-          :model-value="productRating"
-          color="amber"
-          density="compact"
-          size="small"
-          half-increments
-          readonly
-        ></v-rating>
+      <!-- ClientOnly rendering because of hydration mismatch with vuetify rating hidden inputs -->
+      <ClientOnly fallback-tag="span" fallback="Loading ratings...">
+        <v-row class="mx-0 mt-4">
+          <v-rating
+            :model-value="roundedRating"
+            color="amber"
+            density="compact"
+            size="small"
+            half-increments
+            readonly
+            disabled
+          ></v-rating>
 
-        <div class="text-grey ms-4">
-          {{ productRating }} ({{ ratingCount }})
-        </div>
-      </v-row>
+          <div class="text-grey ms-4">
+            {{ product.rating.rate }} ({{ product.rating.count }})
+          </div>
+        </v-row>
+      </ClientOnly>
       <v-row class="my-8 mx-5">
         <p>{{ productDescription }}</p>
         <span
@@ -61,8 +65,10 @@ const props = defineProps<{
   product: Product;
 }>();
 
-// Product rating
-const { productRating, ratingCount } = useProductRating();
+// Round product rating
+const roundedRating = computed(() => {
+  return round(props.product.rating.rate, 0.5);
+});
 
 // Product description
 const showFullDescription = ref(false);

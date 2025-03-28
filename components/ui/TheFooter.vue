@@ -19,12 +19,5 @@
 </template>
 
 <script setup lang="ts">
-const links = ref([
-  "Home",
-  "About Us",
-  "Team",
-  "Services",
-  "Blog",
-  "Contact Us",
-]);
+const links = ref(["Home", "About Us", "Team", "Contact Us"]);
 </script>

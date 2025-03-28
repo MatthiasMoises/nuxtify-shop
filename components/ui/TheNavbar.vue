@@ -10,10 +10,16 @@
 
     <v-btn to="/products">Products</v-btn>
 
-    <v-btn to="/account">My Account</v-btn>
+    <v-btn v-if="userStore.isAuthenticated" to="/account">My Account</v-btn>
 
     <v-btn to="/cart">Cart</v-btn>
 
     <UiThemeToggler />
   </v-toolbar>
 </template>
+
+<script setup lang="ts">
+import { useUserStore } from "~/stores/user";
+
+const userStore = useUserStore();
+</script>

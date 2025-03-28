@@ -1,30 +1,32 @@
 <template>
-  <div v-if="status === 'pending'">Loading ...</div>
-  <div v-else-if="error">
-    <p>An error occurred... :(</p>
-  </div>
-  <div v-else>
-    <h2>Browse Categories</h2>
-    <CategoriesAllItems
-      v-if="productsCategories"
-      :categories="productsCategories?.categories"
-    />
-    <div class="text-center">
-      <h2 class="my-8">Recommended Products</h2>
-      <v-row v-if="productsCategories?.products">
-        <v-col
-          cols="12"
-          md="4"
-          v-for="product in productsCategories.products"
-          :key="product.id"
-        >
-          <ProductsItemCard :product="product" />
-        </v-col>
-      </v-row>
-    </div>
-  </div>
   <div>
-    <v-btn color="primary" @click="refresh()">Refresh Data</v-btn>
+    <div v-if="status === 'pending'">Loading ...</div>
+    <div v-else-if="error">
+      <p>An error occurred... :(</p>
+    </div>
+    <div v-else>
+      <h2>Browse Categories</h2>
+      <CategoriesAllItems
+        v-if="productsCategories"
+        :categories="productsCategories?.categories"
+      />
+      <div class="text-center">
+        <h2 class="my-8">Recommended Products</h2>
+        <v-row v-if="productsCategories?.products">
+          <v-col
+            cols="12"
+            md="4"
+            v-for="product in productsCategories.products"
+            :key="product.id"
+          >
+            <ProductsItemCard :product="product" />
+          </v-col>
+        </v-row>
+      </div>
+    </div>
+    <div>
+      <v-btn color="primary" @click="refresh()">Refresh Data</v-btn>
+    </div>
   </div>
 </template>
 
@@ -68,5 +70,3 @@ const {
   }
 );
 </script>
-
-<style scoped></style>
