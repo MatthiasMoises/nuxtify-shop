@@ -3,11 +3,11 @@ export interface User {
   email: string;
   username: string;
   password?: string;
-  name: {
+  name?: {
     firstname: string;
     lastname: string;
   },
-  address: {
+  address?: {
     city: string;
     street: string;
     number: number;
@@ -17,5 +17,5 @@ export interface User {
       long: string;
     }
   },
-  phone: string;
+  phone?: string;
 }

@@ -1,17 +1,28 @@
 <template>
-  <div>
-    <div v-if="status === 'pending'">Loading ...</div>
-    <div v-else-if="error">
-      <p>An error occurred... :(</p>
-    </div>
-    <div v-else>
-      <h2>Browse Categories</h2>
+  <div class="text-center">
+    <template v-if="status === 'pending'">
+      <v-row>
+        <v-col>
+          <p>Loading ...</p>
+        </v-col>
+      </v-row>
+    </template>
+    <template v-else-if="error">
+      <v-row>
+        <v-col>
+          <p>An error occurred... Please try again later.</p>
+        </v-col>
+      </v-row>
+    </template>
+    <template v-else>
+      <h2 class="my-5">Browse Categories</h2>
       <CategoriesAllItems
         v-if="productsCategories"
         :categories="productsCategories?.categories"
       />
+
       <div class="text-center">
-        <h2 class="my-8">Recommended Products</h2>
+        <h2 class="my-5">Recommended Products</h2>
         <v-row v-if="productsCategories?.products">
           <v-col
             cols="12"
@@ -23,10 +34,14 @@
           </v-col>
         </v-row>
       </div>
-    </div>
-    <div>
-      <v-btn color="primary" @click="refresh()">Refresh Data</v-btn>
-    </div>
+    </template>
+    <v-row class="text-center mb-5">
+      <v-col>
+        <v-btn color="primary" @click="refresh()"
+          >Refresh Recommendations</v-btn
+        >
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -41,7 +56,7 @@ const {
   status,
   refresh,
   error,
-} = useAsyncData<ProductsCategories>(
+} = await useAsyncData<ProductsCategories>(
   "productsCategories",
   async (): Promise<ProductsCategories> => {
     const [products, categories] = await Promise.all<
@@ -64,7 +79,7 @@ const {
         categories: productsCategories.categories,
         products: productsCategories.products
           .sort(() => 0.5 - Math.random())
-          .slice(0, 5),
+          .slice(0, 6),
       };
     },
   }

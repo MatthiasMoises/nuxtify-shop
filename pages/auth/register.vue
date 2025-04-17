@@ -6,9 +6,11 @@
     <v-col cols="12" xs="12" sm="6">
       <v-card class="mx-auto my-8 flex-1-1-100" elevation="16">
         <v-card-item>
-          <v-card-title> My Account </v-card-title>
+          <v-card-title> Register </v-card-title>
 
-          <v-card-subtitle> Update your user data here </v-card-subtitle>
+          <v-card-subtitle>
+            Please fill in your details to register an account
+          </v-card-subtitle>
         </v-card-item>
 
         <v-card-text>
@@ -18,6 +20,7 @@
               label="Username"
               v-model="credentials.username"
               variant="outlined"
+              prepend-inner-icon="mdi-account"
               :rules="rules"
             />
             <v-text-field
@@ -25,7 +28,9 @@
               label="Email"
               v-model="credentials.email"
               variant="outlined"
+              prepend-inner-icon="mdi-email"
               :rules="rules"
+              required
             />
             <v-text-field
               type="password"
@@ -33,40 +38,46 @@
               v-model="credentials.password"
               variant="outlined"
               autocomplete="on"
+              prepend-inner-icon="mdi-lock"
               :rules="rules"
+              required
+            />
+            <v-text-field
+              type="password"
+              label="Repeat Password"
+              v-model="credentials.confirmationPassword"
+              variant="outlined"
+              autocomplete="on"
+              prepend-inner-icon="mdi-lock-alert"
+              :rules="rules"
+              required
             />
 
+            <v-checkbox
+              v-model="checkbox"
+              :rules="[(v) => !!v || 'You must agree to continue!']"
+              label="Do you agree?"
+              required
+            ></v-checkbox>
+
             <v-btn
-              class="mb-5"
               color="primary"
               block
-              @click="handleUpdate"
+              @click="handleRegister"
               :disabled="!valid"
             >
-              Update
-            </v-btn>
-
-            <v-btn color="red" block @click="deleteDialog = true">
-              Delete Account
+              Register
             </v-btn>
           </v-form>
         </v-card-text>
       </v-card>
     </v-col>
-    <UiConfirmationDialog
-      :show-dialog="deleteDialog"
-      @dialog-cancelled="deleteDialog = false"
-      @dialog-confirmed="handleDelete"
-    >
-      <template #dialogTitle>Caution!</template>
-      <template #dialogText
-        >Do you really want to continue? This action cannot be undone!</template
-      >
-    </UiConfirmationDialog>
   </v-row>
 </template>
 
 <script setup lang="ts">
+import type { User } from "~/types/user";
+
 const valid = ref(false);
 
 const rules = reactive([
@@ -77,46 +88,46 @@ const rules = reactive([
   },
 ]);
 
+const checkbox = ref(false);
+
 const credentials = reactive({
-  id: 0,
   username: "",
   email: "",
   password: "",
+  confirmationPassword: "",
 });
 
 const router = useRouter();
 
 const userStore = useUserStore();
 
-onMounted(() => {
-  credentials.id = userStore.currentUser?.id ?? 0;
-  credentials.username = userStore.currentUser?.username ?? "";
-  credentials.email = userStore.currentUser?.email ?? "";
-  credentials.password = userStore.currentUser?.password ?? "";
-});
-
 const snackbarStore = useSnackbarStore();
 
-const handleUpdate = async () => {
-  const updateResult = await userStore.updateUser(credentials);
+const handleRegister = async () => {
+  if (
+    !credentials.username ||
+    !credentials.email ||
+    !credentials.password ||
+    !credentials.confirmationPassword
+  )
+    return;
 
-  if (updateResult) {
-    snackbarStore.showSnackbar({ message: "User updated successfully" });
-  }
-};
+  if (credentials.password === credentials.confirmationPassword) {
+    const newUser: User = {
+      id: 0,
+      email: credentials.email,
+      username: credentials.username,
+      password: credentials.password,
+    };
 
-// Handle user deletion
-const deleteDialog = ref(false);
+    const registerResult = await userStore.registerUser(newUser);
 
-const handleDelete = async () => {
-  const deleteResult = await userStore.deleteUser(credentials.id);
-
-  if (deleteResult) {
-    snackbarStore.showSnackbar({ message: "User deleted successfully" });
-    router.push("/");
+    if (registerResult) {
+      router.push("/auth/login");
+    }
   } else {
     snackbarStore.showSnackbar({
-      message: "Error deleting user",
+      message: "Passwords do not match",
       color: "red",
     });
   }

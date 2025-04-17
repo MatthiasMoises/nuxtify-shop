@@ -6,6 +6,7 @@
         <v-container>
           <NuxtLoadingIndicator />
           <slot />
+          <UiMessageSnackbar />
         </v-container>
       </v-main>
       <UiTheFooter />

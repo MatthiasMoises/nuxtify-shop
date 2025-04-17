@@ -1,5 +1,5 @@
 <template>
-  <v-btn @click="toggleTheme">
+  <v-btn @click="toggleTheme" stacked>
     <v-icon icon="mdi-brightness-4" title="Toggle Theme"></v-icon>
   </v-btn>
 </template>
